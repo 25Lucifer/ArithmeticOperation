@@ -2,6 +2,7 @@ package formula;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,9 +17,26 @@ public class Formula {
         List<String> factors = new ArrayList<>();
         //对fomula进行拆分，数字转化成int，分数转化成数字和符号，符号依旧保存为String
         String[] oprtFactors = formula.split(" ");
+        String[] finOprtNums = transFractionInFormula(oprtFactors);
         //将中缀表达式变成后缀表达式
+
         //计算后缀表达式的结果
         return formula;
+    }
+
+
+    /**
+     * 将中缀表达式转换为后缀表达式
+     * @param midFormula 中缀表达式数组
+     * @return 后缀表达式数组
+     */
+    private String[] transFormula(String[] midFormula){
+        String[] afterFormula = new String[midFormula.length];
+        Stack<String> charcter = new Stack<>();
+        //用正则表达式匹配是数字还是运算符
+        //若为数字存入数组中
+        //判断运算符的优先级 若栈顶运算符优先级高或相同优先级 则栈顶元素出栈 存入数组中 反之进栈
+        return afterFormula;
     }
 
 
@@ -26,7 +44,7 @@ public class Formula {
      * 将中缀表达式数组中的分数元素全部替代成由分子、除号、分母表示
      * @param oprtNums 中缀表达式数组
      */
-    public static void transFractionInFormula(String[] oprtNums){
+    private String[] transFractionInFormula(String[] oprtNums){
         int[] cur = findFraction(oprtNums);
         int count = 0;
         for (int i=0;i<cur.length;i++){
@@ -42,6 +60,7 @@ public class Formula {
         for(String string:finOprtNums){
             System.out.println(string);
         }
+        return finOprtNums;
     }
 
 
@@ -51,7 +70,7 @@ public class Formula {
      * @param cur 分数下标
      * @return 操作后的数组
      */
-    public static String[] transSingleFranction(String[] oprtNums,int cur){
+    private String[] transSingleFranction(String[] oprtNums,int cur){
         String[] finOprtNums = new String[oprtNums.length+2];
         String[] orptNums2 = fractionTransform(oprtNums[cur]);
         for(int i=0;i<finOprtNums.length;i++){
@@ -76,7 +95,7 @@ public class Formula {
      * @param factors 包含所有操作数和运算符的中缀表达式数组
      * @return 分数所在的坐标
      */
-    public static int[] findFraction(String[] factors){
+    private int[] findFraction(String[] factors){
         int[] cur = new int[4];
         int i = 0;
         int j = 0;
@@ -102,7 +121,7 @@ public class Formula {
      * @param fraction 分数
      * @return 字符串数组
      */
-    public static String[] fractionTransform(String fraction){
+    private String[] fractionTransform(String fraction){
         //分子
         int numberator = 0;
         //分母
