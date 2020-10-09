@@ -82,6 +82,9 @@ public class Caculation {
             }
         }
         Fraction result = nums.pop();
+        Formula formula = new Formula();
+        int min = formula.seekLeastCommonFactor(result.numberator,result.denominator);
+        result.numberator/=min;result.denominator/=min;
         return result.numberator+"/"+result.denominator;
     }
 
