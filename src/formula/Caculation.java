@@ -15,14 +15,8 @@ public class Caculation {
         //对fomula进行拆分，数字转化成int，真分数转化成假分数，符号依旧保存为String
         String[] oprtFactors = formula.split(" ");
         transFractionInFormula(oprtFactors);
-        for(String string:oprtFactors){
-            System.out.println(string);
-        }
         //将中缀表达式变成后缀表达式
         String[] afterFormula = transFormula(oprtFactors);
-        for(String string:afterFormula){
-            System.out.println(string);
-        }
         //计算后缀表达式的结果
         formula = caculate(afterFormula);
         return formula;
@@ -31,14 +25,7 @@ public class Caculation {
     private String caculate(String[] afterFormula){
         Stack<Fraction> nums = new Stack<>();
         String[] fractions;
-
-
         Fraction operator1,operator2,res;
-
-        int numberator1=0,numberator2=0,denominator1=1,denominator2=1;
-        int numberatorRes=0,denominatorRes=1;
-
-
         Pattern numPattern = Pattern.compile("[0-9]+");
         Pattern fracPattern = Pattern.compile("[0-9]+/[0-9]+");
         for(String factor:afterFormula){
@@ -164,8 +151,6 @@ public class Caculation {
             oprtNums[cur[i]] = fractionTransform(oprtNums[cur[i]]);
         }
     }
-
-
 
 
     /**
