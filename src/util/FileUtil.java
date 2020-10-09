@@ -9,7 +9,7 @@ import java.util.List;
  * @author lucifer
  */
 public class FileUtil {
-    public void fileWriter(List<String> formulas, String filepath) {
+    public void fileWriter(List<String> strings, String filepath) {
         String str = "";
         File file = new File(filepath);
         boolean res = true;
@@ -20,8 +20,8 @@ public class FileUtil {
             if (res){
                 FileWriter fw = new FileWriter(file);
                 int i = 0;
-                while(i<formulas.size()){
-                    str = formulas.get(i);
+                while(i<strings.size()){
+                    str = strings.get(i);
                     fw.write(str+"\n");
                     fw.flush();
                     i++;

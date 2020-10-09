@@ -19,12 +19,12 @@ public class Caculation {
             System.out.println(string);
         }
         //将中缀表达式变成后缀表达式
-        String[] afterFomula = transFormula(oprtFactors);
-        for(String string:afterFomula){
+        String[] afterFormula = transFormula(oprtFactors);
+        for(String string:afterFormula){
             System.out.println(string);
         }
         //计算后缀表达式的结果
-        formula = caculate(afterFomula);
+        formula = caculate(afterFormula);
         return formula;
     }
 
@@ -85,7 +85,7 @@ public class Caculation {
         Formula formula = new Formula();
         int min = formula.seekLeastCommonFactor(result.numberator,result.denominator);
         result.numberator/=min;result.denominator/=min;
-        return result.numberator+"/"+result.denominator;
+        return result.denominator==1? String.valueOf(result.numberator) :result.numberator+"/"+result.denominator;
     }
 
     /**

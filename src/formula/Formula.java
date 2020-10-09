@@ -139,7 +139,7 @@ public class Formula {
      * @param b 参数b
      * @return 最大公因数
      */
-    private int seekLeastCommonFactor(int a, int b){
+    public int seekLeastCommonFactor(int a, int b){
         int result = 1;
         for (int i = 1; i<=(Math.min(a, b)); i++){
             if (a%i==0&&b%i==0){
