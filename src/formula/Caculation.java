@@ -9,54 +9,81 @@ import java.util.regex.Pattern;
 /**
  * @author lucifer
  */
-public class Calculation {
+public class Caculation {
     public String caculateAnswer(String formula){
         List<String> factors = new ArrayList<>();
-        //对fomula进行拆分，数字转化成int，分数转化成数字和符号，符号依旧保存为String
+        //对fomula进行拆分，数字转化成int，真分数转化成假分数，符号依旧保存为String
         String[] oprtFactors = formula.split(" ");
-        String[] finOprtNums = transFractionInFormula(oprtFactors);
+        transFractionInFormula(oprtFactors);
+        for(String string:oprtFactors){
+            System.out.println(string);
+        }
         //将中缀表达式变成后缀表达式
-        String[] afterFomula = transFormula(finOprtNums);
+        String[] afterFomula = transFormula(oprtFactors);
+        for(String string:afterFomula){
+            System.out.println(string);
+        }
         //计算后缀表达式的结果
-
+        formula = caculate(afterFomula);
         return formula;
     }
 
     private String caculate(String[] afterFormula){
-        Stack<String> nums = new Stack<>();
+        Stack<Fraction> nums = new Stack<>();
+        String[] fractions;
+
+
+        Fraction operator1,operator2,res;
+
         int numberator1=0,numberator2=0,denominator1=1,denominator2=1;
         int numberatorRes=0,denominatorRes=1;
+
+
         Pattern numPattern = Pattern.compile("[0-9]+");
+        Pattern fracPattern = Pattern.compile("[0-9]+/[0-9]+");
         for(String factor:afterFormula){
             if (numPattern.matcher(factor).matches()){
-                nums.add(factor);
+                Fraction fraction = new Fraction();
+                fraction.numberator = Integer.parseInt(factor);
+                fraction.denominator = 1;
+                nums.add(fraction);
+            }else if(fracPattern.matcher(factor).matches()){
+                Fraction fraction = new Fraction();
+                fractions = factor.split("/");
+                fraction.numberator = Integer.parseInt(fractions[0]);
+                fraction.denominator = Integer.parseInt(fractions[1]);
+                nums.add(fraction);
             }else {
-                numberator2 = Integer.parseInt(nums.pop())*denominator2;
-                numberator1 = Integer.parseInt(nums.pop())*denominator1;
+                operator2 = nums.pop();
+                operator1 = nums.pop();
+                res = new Fraction();
                 switch (factor){
                     case "+":
-                        numberatorRes = numberator1*denominator2+numberator2*denominator1;
-                        denominatorRes = denominator1*denominator2;
-
+                        res.numberator = operator1.numberator*operator2.denominator+operator2.numberator*operator1.denominator;
+                        res.denominator = operator1.denominator*operator2.denominator;
+                        nums.add(res);
+                        break;
                     case "-":
-                        numberatorRes = numberator1*denominator2-numberator2*denominator1;
-                        denominatorRes = denominator1*denominator2;
-
+                        res.numberator = operator1.numberator*operator2.denominator-operator2.numberator*operator1.denominator;
+                        res.denominator = operator1.denominator*operator2.denominator;
+                        nums.add(res);
+                        break;
                     case "*":
-                        numberatorRes = numberator1*numberator2;
-                        denominatorRes = denominator1*denominator2;
+                        res.numberator = operator1.numberator*operator2.numberator;
+                        res.denominator = operator1.denominator*operator2.denominator;
+                        nums.add(res);
+                        break;
                     case "/":
-                        numberatorRes = numberator1*denominator2;
-                        denominatorRes = denominator1*numberator2;
+                        res.numberator = operator1.numberator*operator2.denominator;
+                        res.denominator = operator1.denominator*operator2.numberator;
+                        nums.add(res);
+                        break;
                 }
             }
         }
-
-
-
-        return "";
+        Fraction result = nums.pop();
+        return result.numberator+"/"+result.denominator;
     }
-
 
     /**
      * 将中缀表达式转换为后缀表达式
@@ -67,7 +94,7 @@ public class Calculation {
         String[] afterFormula = new String[midFormula.length];
         Stack<String> charcter = new Stack<>();
         //用正则表达式匹配是数字还是运算符
-        Pattern numsPattern = Pattern.compile("[0-9]+");
+        Pattern numsPattern = Pattern.compile("[0-9]+|[0-9]+/[0-9]+");
         Pattern charPattern = Pattern.compile("\\*|/|\\+|-");
         Pattern level = Pattern.compile("\\*|/");
         int topStackLevel=1;
@@ -121,51 +148,20 @@ public class Calculation {
 
 
     /**
-     * 将中缀表达式数组中的分数元素全部替代成由分子、除号、分母表示
+     * 将中缀表达式数组中的真分数全部替代成假分数
      * @param oprtNums 中缀表达式数组
      */
-    private String[] transFractionInFormula(String[] oprtNums){
+    private void transFractionInFormula(String[] oprtNums){
         int[] cur = findFraction(oprtNums);
         int count = 0;
         for (int j : cur) {
             if (j != -1) count++;
         }
-        String[] finOprtNums = new String[oprtNums.length+2*count];
-        String[] temp = oprtNums;
         for(int i=0;i<count;i++){
-            temp = transSingleFranction(temp,cur[i]);
-            for (int j=i+1;j<count;j++){
-                cur[j]+=2;
-            }
+            oprtNums[cur[i]] = fractionTransform(oprtNums[cur[i]]);
         }
-        finOprtNums = temp;
-        return finOprtNums;
     }
 
-
-    /**
-     * 将数组中的单个是分数的元素替代成表示分数的多个元素
-     * @param oprtNums 被操作数组
-     * @param cur 分数下标
-     * @return 操作后的数组
-     */
-    private String[] transSingleFranction(String[] oprtNums,int cur){
-        String[] finOprtNums = new String[oprtNums.length+2];
-        String[] orptNums2 = fractionTransform(oprtNums[cur]);
-        for(int i=0;i<finOprtNums.length;i++){
-            if (i<cur){
-                finOprtNums[i]=oprtNums[i];
-            }else if (i==cur){
-                finOprtNums[i]=orptNums2[0];
-                finOprtNums[i+1]=orptNums2[1];
-                finOprtNums[i+2]=orptNums2[2];
-                i = i+2;
-            }else{
-                finOprtNums[i]=oprtNums[i-2];
-            }
-        }
-        return finOprtNums;
-    }
 
 
 
@@ -200,15 +196,15 @@ public class Calculation {
      * @param fraction 分数
      * @return 字符串数组
      */
-    private String[] fractionTransform(String fraction){
+    private String fractionTransform(String fraction){
         //分子
         int numberator = 0;
         //分母
         int denominator = 0;
         //系数
         int modulus = 0;
-        //返回的字符串数组
-        String[] oprtFactors = new String[3];
+        //返回的字符串
+        String oprtFactor;
 
         String[] nums = fraction.split("'");
         if (nums.length==1){
@@ -222,11 +218,7 @@ public class Calculation {
             denominator = Integer.parseInt(nums2[1]);
             numberator = numberator + denominator * modulus;
         }
-
-        oprtFactors[0] = String.valueOf(numberator);
-        oprtFactors[1] = "/";
-        oprtFactors[2] = String.valueOf(denominator);
-
-        return oprtFactors;
+        oprtFactor = String.valueOf(numberator)+"/"+String.valueOf(denominator);
+        return oprtFactor;
     }
 }
